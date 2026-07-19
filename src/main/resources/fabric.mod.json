@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "wynnveil",
+  "version": "${version}",
+  "name": "WynnVeil",
+  "description": "Cleverly hides unintended Wynncraft chunks when using Voxy and Distant Horizons",
+  "authors": [
+    "tunaflsh"
+  ],
+  "contact": {
+    "homepage": "https://github.com/tunaflsh/wynnveil",
+    "sources": "https://github.com/tunaflsh/wynnveil",
+    "issues": "https://github.com/tunaflsh/wynnveil/issues"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/wynnveil/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "tunaflsh.wynnveil.WynnVeil"
+    ],
+    "client": [
+      "tunaflsh.wynnveil.client.WynnVeilClient"
+    ]
+  },
+  "mixins": [
+    "wynnveil.mixins.json",
+    {
+      "config": "wynnveil.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
