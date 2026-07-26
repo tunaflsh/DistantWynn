@@ -1,10 +1,59 @@
 plugins {
 	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
+	id 'lol.bai.explosion' version "${explosion_version}"
 }
 
 version = project.mod_version
 group = project.maven_group
+
+configurations {
+	voxyRuntimeOnly
+	dhRuntimeOnly
+}
+
+repositories {
+	maven {
+		url = "https://maven2.bai.lol"
+		content { includeGroup "lol.bai.explosion" }
+	}
+	maven {
+		name = "DevAuth"
+		url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
+	}
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
+	maven {
+		name = "CaffeineMC"
+		url = "https://maven.caffeinemc.net/releases"
+	}
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		}
+		filter { includeGroup "maven.modrinth" }
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	modLocalRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
+	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modLocalRuntime "net.caffeinemc:sodium-fabric:${project.sodium_version}"
+
+	voxyRuntimeOnly explosion.fabric("maven.modrinth:voxy:${project.voxy_version}")
+	dhRuntimeOnly "maven.modrinth:distanthorizons:${project.dh_version}"
+}
 
 loom {
 	splitEnvironmentSourceSets()
@@ -15,14 +64,33 @@ loom {
 			sourceSet sourceSets.client
 		}
 	}
-}
 
-dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	runs {
+		client {
+			configName = "Minecraft Vanilla"
+			vmArgs "-Ddevauth.enabled=true"
+			runDir "run/vanilla"
+			client()
+		}
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+		voxyClient {
+			configName = "Minecraft Voxy"
+			vmArgs "-Ddevauth.enabled=true"
+			runDir "run/voxy"
+			client()
+			property("fabric.addMods", "${-> configurations.voxyRuntimeOnly.asPath}")
+		}
+
+		dhClient {
+			configName = "Minecraft Distant Horizons"
+			vmArgs "-Ddevauth.enabled=true"
+			runDir "run/dh"
+			client()
+			property("fabric.addMods", "${-> configurations.dhRuntimeOnly.asPath}")
+		}
+
+		remove server
+	}
 }
 
 processResources {

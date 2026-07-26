@@ -1,6 +1,10 @@
 pluginManagement {
 	repositories {
 		maven {
+			url = "https://maven2.bai.lol"
+			content { includeGroup "lol.bai.explosion" }
+		}
+		maven {
 			name = 'Fabric'
 			url = 'https://maven.fabricmc.net/'
 		}
