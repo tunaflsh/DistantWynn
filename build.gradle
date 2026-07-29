@@ -59,9 +59,8 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"wynnveil" {
+		"distantwynn" {
 			sourceSet sourceSets.main
-			sourceSet sourceSets.client
 		}
 	}
 
@@ -73,7 +72,7 @@ loom {
 			client()
 		}
 
-		voxyClient {
+		voxy {
 			configName = "Minecraft Voxy"
 			vmArgs "-Ddevauth.enabled=true"
 			runDir "run/voxy"
@@ -81,7 +80,7 @@ loom {
 			property("fabric.addMods", "${-> configurations.voxyRuntimeOnly.asPath}")
 		}
 
-		dhClient {
+		dh {
 			configName = "Minecraft Distant Horizons"
 			vmArgs "-Ddevauth.enabled=true"
 			runDir "run/dh"

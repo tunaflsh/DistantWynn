@@ -1,4 +1,4 @@
-package tunaflsh.wynnveil;
+package me.tunaflsh.distantwynn;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -7,8 +7,8 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WynnVeil implements ModInitializer {
-	public static final String MOD_ID = "wynnveil";
+public class DistantWynn implements ModInitializer {
+	public static final String MOD_ID = "distantwynn";
 
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
