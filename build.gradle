@@ -17,10 +17,15 @@ group = project.maven_group
 configurations {
 	voxyRuntimeOnly
 	dhRuntimeOnly
+
+	configure([modLocalRuntime, voxyRuntimeOnly, dhRuntimeOnly]) {
+		exclude group: "net.fabricmc.fabric-api"
+	}
 }
 
 repositories {
 	maven {
+		name = "badasintended/explosion"
 		url = "https://maven2.bai.lol"
 		content { includeGroup "lol.bai.explosion" }
 	}
@@ -35,6 +40,14 @@ repositories {
 	maven {
 		name = "CaffeineMC"
 		url = "https://maven.caffeinemc.net/releases"
+	}
+	maven {
+		name = "Xander"
+		url = "https://maven.isxander.dev/releases"
+	}
+	maven {
+		name = "shedaniel"
+		url = "https://maven.shedaniel.me/"
 	}
 	exclusiveContent {
 		forRepository {
@@ -56,33 +69,28 @@ dependencies {
 
 	modLocalRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
 	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modLocalRuntime "net.caffeinemc:sodium-fabric:${project.sodium_version}"
+	modLocalRuntime "maven.modrinth:remember-my-txt:${project.remember_version}"
+	modLocalRuntime "dev.isxander:yet-another-config-lib:${project.yacl_version}"
+	modLocalRuntime "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
+	modLocalRuntime "maven.modrinth:f5-split:${project.f5_split_version}"
+	modLocalRuntime "maven.modrinth:freecam:${project.freecam_version}"
 
+	voxyRuntimeOnly "net.caffeinemc:sodium-fabric:${project.sodium_version}"
 	voxyRuntimeOnly explosion.fabric("maven.modrinth:voxy:${project.voxy_version}")
 	dhRuntimeOnly "maven.modrinth:distanthorizons:${project.dh_version}"
 }
 
 loom {
-	splitEnvironmentSourceSets()
-
-	mods {
-		"distantwynn" {
-			sourceSet sourceSets.main
-		}
-	}
-
 	runs {
 		client {
 			configName = "Minecraft Vanilla"
 			vmArgs "-Ddevauth.enabled=true"
-			runDir "run/vanilla"
 			client()
 		}
 
 		voxy {
 			configName = "Minecraft Voxy"
 			vmArgs "-Ddevauth.enabled=true"
-			runDir "run/voxy"
 			client()
 			property("fabric.addMods", "${-> configurations.voxyRuntimeOnly.asPath}")
 		}
@@ -90,7 +98,6 @@ loom {
 		dh {
 			configName = "Minecraft Distant Horizons"
 			vmArgs "-Ddevauth.enabled=true"
-			runDir "run/dh"
 			client()
 			property("fabric.addMods", "${-> configurations.dhRuntimeOnly.asPath}")
 		}
