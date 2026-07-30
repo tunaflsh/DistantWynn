@@ -2,6 +2,13 @@ plugins {
 	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
 	id 'lol.bai.explosion' version "${explosion_version}"
+	id 'eclipse'
+}
+
+eclipse {
+	project {
+		name = rootProject.name
+	}
 }
 
 version = project.mod_version
