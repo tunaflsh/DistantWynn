@@ -24,6 +24,9 @@ bin/
 .classpath
 .project
 
+# neovim
+.nvim.shada
+
 # macos
 
 *.DS_Store
