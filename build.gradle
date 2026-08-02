@@ -92,13 +92,6 @@ loom {
 			vmArgs "-Ddevauth.enabled=true"
 		}
 
-		sodiummixin {
-			configName = "Export Sodium Mixin"
-			client()
-			property("fabric.addMods", "${-> configurations.sodiumRuntime.asPath}")
-			vmArgs "-Dmixin.debug.export=true"
-		}
-
 		sodium {
 			configName = "Minecraft Sodium"
 			client()
@@ -107,6 +100,7 @@ loom {
 				configurations.sodiumRuntime.asPath
 			].join(File.pathSeparator)}")
 			vmArgs "-Ddevauth.enabled=true"
+			vmArgs "-Dmixin.debug.export=true"
 		}
 
 		voxy {
@@ -118,6 +112,7 @@ loom {
 				configurations.voxyRuntime.asPath
 			].join(File.pathSeparator)}")
 			vmArgs "-Ddevauth.enabled=true"
+			vmArgs "-Dmixin.debug.export=true"
 		}
 
 		dh {
@@ -128,6 +123,7 @@ loom {
 				configurations.dhRuntime.asPath
 			].join(File.pathSeparator)}")
 			vmArgs "-Ddevauth.enabled=true"
+			vmArgs "-Dmixin.debug.export=true"
 		}
 
 		remove server

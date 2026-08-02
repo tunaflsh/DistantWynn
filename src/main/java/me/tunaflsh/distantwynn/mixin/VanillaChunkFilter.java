@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 import net.minecraft.core.BlockBox;
 
 @Mixin(SectionOcclusionGraph.class)
-public class ChunkFilter {
+public class VanillaChunkFilter {
 	@Inject(
 	method = "method_62924",
 	at = @At(
@@ -24,17 +24,17 @@ public class ChunkFilter {
 	locals = LocalCapture.CAPTURE_FAILSOFT,
 	cancellable = true)
 	private static void onAddSectionsInFrustum(
-			final List<SectionRenderDispatcher.RenderSection> list,
-			final List<SectionRenderDispatcher.RenderSection> list2,
+			final List<SectionRenderDispatcher.RenderSection> visibleSections,
+			final List<SectionRenderDispatcher.RenderSection> nearbyVisibleSections,
 			final Octree.Node node,
-			final boolean bl,
-			final int i,
-			final boolean bl2,
-			final CallbackInfo ci,
+			final boolean shouldRenderSection,
+			final int depth,
+			final boolean shouldRenderNearbySection,
+			final CallbackInfo callbackInfo,
 			final SectionRenderDispatcher.RenderSection renderSection) {
 		final BlockBox currentRegion = WynnRegions.getCurrent();
 		if (currentRegion == null || renderSection == null) return;
 		if (currentRegion.contains(renderSection.getRenderOrigin())) return;
-		ci.cancel();
+		callbackInfo.cancel();
 	}
 }
