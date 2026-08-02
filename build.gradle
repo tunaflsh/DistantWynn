@@ -15,10 +15,12 @@ version = project.mod_version
 group = project.maven_group
 
 configurations {
-	voxyRuntimeOnly
-	dhRuntimeOnly
+	debugRuntime;
+	sodiumRuntime;
+	voxyRuntime;
+	dhRuntime;
 
-	configure([modLocalRuntime, voxyRuntimeOnly, dhRuntimeOnly]) {
+	configure([debugRuntime, sodiumRuntime, voxyRuntime, dhRuntime]) {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 }
@@ -66,40 +68,66 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modCompileOnly "net.caffeinemc:sodium-fabric:${project.sodium_version}"
 
-	modLocalRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
-	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modLocalRuntime "maven.modrinth:remember-my-txt:${project.remember_version}"
-	modLocalRuntime "dev.isxander:yet-another-config-lib:${project.yacl_version}"
-	modLocalRuntime "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
-	modLocalRuntime "maven.modrinth:f5-split:${project.f5_split_version}"
-	modLocalRuntime "maven.modrinth:freecam:${project.freecam_version}"
+	debugRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
+	debugRuntime "maven.modrinth:remember-my-txt:${project.remember_version}"
+	debugRuntime "dev.isxander:yet-another-config-lib:${project.yacl_version}"
+	debugRuntime "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
+	debugRuntime "maven.modrinth:f5-split:${project.f5_split_version}"
+	debugRuntime "maven.modrinth:freecam:${project.freecam_version}"
 
-	voxyRuntimeOnly "net.caffeinemc:sodium-fabric:${project.sodium_version}"
-	voxyRuntimeOnly explosion.fabric("maven.modrinth:voxy:${project.voxy_version}")
-	dhRuntimeOnly "maven.modrinth:distanthorizons:${project.dh_version}"
+	sodiumRuntime "net.caffeinemc:sodium-fabric:${project.sodium_version}"
+	voxyRuntime explosion.fabric("maven.modrinth:voxy:${project.voxy_version}")
+	dhRuntime "maven.modrinth:distanthorizons:${project.dh_version}"
 }
 
 loom {
 	runs {
 		client {
 			configName = "Minecraft Vanilla"
-			vmArgs "-Ddevauth.enabled=true"
 			client()
+			property("fabric.addMods", "${-> configurations.debugRuntime.asPath}")
+			vmArgs "-Ddevauth.enabled=true"
+		}
+
+		sodiummixin {
+			configName = "Export Sodium Mixin"
+			client()
+			property("fabric.addMods", "${-> configurations.sodiumRuntime.asPath}")
+			vmArgs "-Dmixin.debug.export=true"
+		}
+
+		sodium {
+			configName = "Minecraft Sodium"
+			client()
+			property("fabric.addMods", "${-> [
+				configurations.debugRuntime.asPath,
+				configurations.sodiumRuntime.asPath
+			].join(File.pathSeparator)}")
+			vmArgs "-Ddevauth.enabled=true"
 		}
 
 		voxy {
 			configName = "Minecraft Voxy"
-			vmArgs "-Ddevauth.enabled=true"
 			client()
-			property("fabric.addMods", "${-> configurations.voxyRuntimeOnly.asPath}")
+			property("fabric.addMods", "${-> [
+				configurations.debugRuntime.asPath,
+				configurations.sodiumRuntime.asPath,
+				configurations.voxyRuntime.asPath
+			].join(File.pathSeparator)}")
+			vmArgs "-Ddevauth.enabled=true"
 		}
 
 		dh {
 			configName = "Minecraft Distant Horizons"
-			vmArgs "-Ddevauth.enabled=true"
 			client()
-			property("fabric.addMods", "${-> configurations.dhRuntimeOnly.asPath}")
+			property("fabric.addMods", "${-> [
+				configurations.debugRuntime.asPath,
+				configurations.dhRuntime.asPath
+			].join(File.pathSeparator)}")
+			vmArgs "-Ddevauth.enabled=true"
 		}
 
 		remove server
@@ -112,6 +140,33 @@ processResources {
 
 	filesMatching("fabric.mod.json") {
 		expand "version": version
+	}
+}
+
+import groovy.json.JsonOutput
+
+tasks.register('neovim') {
+	group = 'ide'
+	description = 'Generates Neovim launch configurations.'
+
+	doLast {
+		def runsData = loom.runs.collect { run ->
+			def taskName = "run${run.name.capitalize()}"
+			[
+				type: "fabric-loom",
+				taskName: taskName,
+				name: "${run.configName} (gradlew ${taskName})",
+				request: "launch",
+				console: "integratedTerminal"
+			]
+		}
+		def rootData = [
+			version: "1.0.0",
+			configurations: runsData
+		]
+		def outputFile = file(".nvim/launch.json")
+		outputFile.parentFile.mkdirs()
+		outputFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(rootData))
 	}
 }
 

@@ -26,6 +26,7 @@ bin/
 
 # neovim
 .nvim.shada
+.nvim/
 
 # macos
 
