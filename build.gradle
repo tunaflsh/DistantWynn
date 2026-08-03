@@ -84,6 +84,8 @@ dependencies {
 }
 
 loom {
+	log4jConfigs.from "log4j-dev.xml"
+
 	runs {
 		client {
 			configName = "Minecraft Vanilla"

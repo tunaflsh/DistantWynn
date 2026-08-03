@@ -11,7 +11,7 @@ import net.minecraft.resources.Identifier;
 
 public class DistantWynn implements ModInitializer {
 	public static final String MOD_ID = "distantwynn";
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger("DistantWynn");
 
 	public static Identifier id(final String path) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
@@ -30,7 +30,7 @@ public class DistantWynn implements ModInitializer {
 
 		ClientTickEvents.START_WORLD_TICK.register(world -> {
 			if (WynnRegions.updateRegion())
-				LOGGER.info("Entered {}.", WynnRegions.getCurrentName());
+				LOGGER.debug("Entered {}.", WynnRegions.getCurrentName());
 		});
 	}
 }
