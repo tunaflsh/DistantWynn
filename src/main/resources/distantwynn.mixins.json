@@ -5,6 +5,7 @@
   "mixins": [
     "VanillaChunkFilter", "SodiumChunkFilter"
   ],
+  "plugin": "me.tunaflsh.distantwynn.MixinConfigPlugin",
   "injectors": {
     "defaultRequire": 1
   },
