@@ -19,8 +19,9 @@ configurations {
 	sodiumRuntime;
 	voxyRuntime;
 	dhRuntime;
+	wynnRuntime;
 
-	configure([debugRuntime, sodiumRuntime, voxyRuntime, dhRuntime]) {
+	configure([debugRuntime, sodiumRuntime, voxyRuntime, dhRuntime, wynnRuntime]) {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 }
@@ -70,6 +71,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modCompileOnly "net.caffeinemc:sodium-fabric:${project.sodium_version}"
+	modCompileOnly "maven.modrinth:voxy:${project.voxy_version}"
+	modCompileOnly "maven.modrinth:distanthorizons:${project.dh_version}"
 
 	debugRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
 	debugRuntime "maven.modrinth:remember-my-txt:${project.remember_version}"
@@ -81,6 +84,9 @@ dependencies {
 	sodiumRuntime "net.caffeinemc:sodium-fabric:${project.sodium_version}"
 	voxyRuntime explosion.fabric("maven.modrinth:voxy:${project.voxy_version}")
 	dhRuntime "maven.modrinth:distanthorizons:${project.dh_version}"
+
+	wynnRuntime "maven.modrinth:wynnlodgrabber:${project.wynnlod_version}"
+	wynnRuntime "maven.modrinth:wynntils:${project.wynntils_version}"
 }
 
 loom {
@@ -123,6 +129,41 @@ loom {
 			property("fabric.addMods", "${-> [
 				configurations.debugRuntime.asPath,
 				configurations.dhRuntime.asPath
+			].join(File.pathSeparator)}")
+			vmArgs "-Ddevauth.enabled=true"
+			vmArgs "-Dmixin.debug.export=true"
+		}
+
+		wynn {
+			configName = "Vanilla + Wynntils"
+			client()
+			property("fabric.addMods", "${-> [
+				configurations.debugRuntime.asPath,
+				configurations.wynnRuntime.asPath
+			].join(File.pathSeparator)}")
+			vmArgs "-Ddevauth.enabled=true"
+		}
+
+		voxyWynn {
+			configName = "Voxy + Wynntils"
+			client()
+			property("fabric.addMods", "${-> [
+				configurations.debugRuntime.asPath,
+				configurations.sodiumRuntime.asPath,
+				configurations.voxyRuntime.asPath,
+				configurations.wynnRuntime.asPath
+			].join(File.pathSeparator)}")
+			vmArgs "-Ddevauth.enabled=true"
+			vmArgs "-Dmixin.debug.export=true"
+		}
+
+		dhWynn {
+			configName = "Distant Horizons + Wynntils"
+			client()
+			property("fabric.addMods", "${-> [
+				configurations.debugRuntime.asPath,
+				configurations.dhRuntime.asPath,
+				configurations.wynnRuntime.asPath
 			].join(File.pathSeparator)}")
 			vmArgs "-Ddevauth.enabled=true"
 			vmArgs "-Dmixin.debug.export=true"
