@@ -39,7 +39,6 @@ public final class WynnRegions {
 	public static final BlockBox[] REGIONS = REGION_NAMES.keySet().toArray(new BlockBox[0]);
 
 	private static boolean enabled;
-	private static @Nullable Minecraft minecraft;
 	private static @Nullable BlockBox current = null;
 
 	public static @Nullable BlockBox getRegionAt(final BlockPos pos) {
@@ -49,8 +48,7 @@ public final class WynnRegions {
 		return null;
 	}
 
-	public static void enable(final Minecraft client) {
-		minecraft = client;
+	public static void enable() {
 		enabled = true;
 	}
 
@@ -71,8 +69,12 @@ public final class WynnRegions {
 	 */
 	public static boolean updateRegion() {
 		final BlockBox oldRegion = current;
-		final LocalPlayer player = minecraft.player;
-		current = enabled && player != null ? getRegionAt(player.blockPosition()) : null;
+		if (!enabled) {
+			current = null;
+		} else {
+			final LocalPlayer player = Minecraft.getInstance().player;
+			current = player != null ? getRegionAt(player.blockPosition()) : null;
+		}
 		return current != oldRegion;
 	}
 }

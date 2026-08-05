@@ -1,4 +1,4 @@
-package me.tunaflsh.distantwynn.mixin;
+package me.tunaflsh.distantwynn.mixin.minecraft;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 import net.minecraft.core.BlockBox;
 
 @Mixin(SectionOcclusionGraph.class)
-public class VanillaChunkFilter {
+public class MinecraftRegionCheck {
 	@Inject(
 	method = "method_62924",
 	at = @At(
@@ -23,7 +23,7 @@ public class VanillaChunkFilter {
 		target = "Lnet/minecraft/client/renderer/Octree$Node;getSection()Lnet/minecraft/client/renderer/chunk/SectionRenderDispatcher$RenderSection;"),
 	locals = LocalCapture.CAPTURE_FAILSOFT,
 	cancellable = true)
-	private static void onAddSectionsInFrustum(
+	private static void insideRegion(
 			final List<SectionRenderDispatcher.RenderSection> visibleSections,
 			final List<SectionRenderDispatcher.RenderSection> nearbyVisibleSections,
 			final Octree.Node node,

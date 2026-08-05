@@ -1,19 +1,35 @@
 package me.tunaflsh.distantwynn;
 
-import net.fabricmc.loader.api.FabricLoader;
+import java.util.List;
+import java.util.Set;
+
 import org.objectweb.asm.tree.ClassNode;
-import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.service.MixinService;
 
-import java.util.List;
-import java.util.Set;
+import net.fabricmc.loader.api.FabricLoader;
 
 public class MixinConfigPlugin implements IMixinConfigPlugin {
-	private static final Logger LOGGER = DistantWynn.LOGGER;
-	private final boolean hasSodium = FabricLoader.getInstance().isModLoaded("sodium");
-	private final boolean hasSodiumOC = hasSodium && hasClass("net.caffeinemc.mods.sodium.client.render.chunk.occlusion.OcclusionCuller");
+	static boolean hasSodium = false;
+	static boolean hasVoxy = false;
+
+	public MixinConfigPlugin() {
+		FabricLoader instance = FabricLoader.getInstance();
+
+		hasSodium = instance.isModLoaded("sodium");
+		boolean hasSodiumOcclusionCuller = hasSodium && hasClass("net.caffeinemc.mods.sodium.client.render.chunk.occlusion.OcclusionCuller");
+		if (hasSodium && !hasSodiumOcclusionCuller)
+			DistantWynn.LOGGER.error("Sodium version is incompatible.");
+		hasSodium = hasSodiumOcclusionCuller;
+
+		hasVoxy = instance.isModLoaded("voxy");
+		boolean hasVoxyRenderSystem = hasVoxy && hasClass("me.cortex.voxy.client.core.VoxyRenderSystem");
+		boolean hasVoxyTraverser = hasVoxy && hasClass("me.cortex.voxy.client.core.rendering.hierachical.HierarchicalOcclusionTraverser");
+		if (hasVoxy && !(hasVoxyRenderSystem && hasVoxyTraverser))
+			DistantWynn.LOGGER.error("Voxy version is incompatible.");
+		hasVoxy = hasVoxyRenderSystem && hasVoxyTraverser;
+	}
 
 	private static boolean hasClass(String name) {
 		try {
@@ -22,14 +38,9 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
 		} catch (ClassNotFoundException e) {
 			return false;
 		} catch (Exception e) {
-			LOGGER.error("Unexpected exception checking whether class exists:", e);
+			DistantWynn.LOGGER.error("Unexpected exception checking whether class exists:", e);
 			return false;
 		}
-	}
-
-	{
-		if (hasSodium && !hasSodiumOC)
-			LOGGER.error("Sodium version is incompatible.");
 	}
 
 	@Override
@@ -40,8 +51,11 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		if (mixinClassName.contains("Sodium"))
-			return hasSodiumOC;
+		DistantWynn.LOGGER.debug(mixinClassName);
+		if (mixinClassName.contains("sodium"))
+			return hasSodium;
+		if (mixinClassName.contains("voxy"))
+			return hasVoxy;
 		return true;
 	}
 

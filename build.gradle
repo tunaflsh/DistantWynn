@@ -94,7 +94,7 @@ loom {
 
 	runs {
 		client {
-			configName = "Minecraft Vanilla"
+			configName = "Minecraft Client"
 			client()
 			property("fabric.addMods", "${-> configurations.debugRuntime.asPath}")
 			vmArgs "-Ddevauth.enabled=true"

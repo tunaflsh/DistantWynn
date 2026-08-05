@@ -1,4 +1,4 @@
-package me.tunaflsh.distantwynn.mixin;
+package me.tunaflsh.distantwynn.mixin.sodium;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,15 +12,13 @@ import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
 import net.minecraft.core.BlockBox;
 
 @Mixin(OcclusionCuller.class)
-public class SodiumChunkFilter {
+public class SodiumRegionCheck {
 	@Inject(
 	method = "isSectionVisible",
 	at = @At("HEAD"),
 	cancellable = true)
-	private static void onIsSectionVisible(
-			final RenderSection section,
-			final Viewport viewport,
-			final float maxDistance,
+	private static void insideRegion(
+			final RenderSection section, final Viewport viewport, final float maxDistance,
 			final CallbackInfoReturnable<Boolean> callbackInfo) {
 		final BlockBox currentRegion = WynnRegions.getCurrent();
 		if (currentRegion == null) return;

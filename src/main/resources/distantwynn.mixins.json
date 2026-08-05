@@ -3,7 +3,11 @@
   "package": "me.tunaflsh.distantwynn.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "VanillaChunkFilter", "SodiumChunkFilter"
+    "minecraft.MinecraftRegionCheck",
+    "sodium.SodiumRegionCheck",
+    "voxy.VoxyRegionCheck",
+    "voxy.VoxyTraverserAccessor",
+    "voxy.LevelRendererAccessor"
   ],
   "plugin": "me.tunaflsh.distantwynn.MixinConfigPlugin",
   "injectors": {
