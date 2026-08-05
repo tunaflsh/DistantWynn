@@ -14,7 +14,20 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
 	static boolean hasSodium = false;
 	static boolean hasVoxy = false;
 
-	public MixinConfigPlugin() {
+	private static boolean hasClass(String name) {
+		try {
+			MixinService.getService().getBytecodeProvider().getClassNode(name);
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		} catch (Exception e) {
+			DistantWynn.LOGGER.error("Unexpected exception checking whether class exists:", e);
+			return false;
+		}
+	}
+
+	@Override
+	public void onLoad(String mixinPackage) {
 		FabricLoader instance = FabricLoader.getInstance();
 
 		hasSodium = instance.isModLoaded("sodium");
@@ -30,21 +43,6 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
 			DistantWynn.LOGGER.error("Voxy version is incompatible.");
 		hasVoxy = hasVoxyRenderSystem && hasVoxyTraverser;
 	}
-
-	private static boolean hasClass(String name) {
-		try {
-			MixinService.getService().getBytecodeProvider().getClassNode(name);
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
-		} catch (Exception e) {
-			DistantWynn.LOGGER.error("Unexpected exception checking whether class exists:", e);
-			return false;
-		}
-	}
-
-	@Override
-	public void onLoad(String mixinPackage) {}
 
 	@Override
 	public String getRefMapperConfig() { return null; }

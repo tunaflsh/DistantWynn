@@ -78,8 +78,16 @@ public class VoxyRegionCheck implements IVoxyRegionUpdater {
 		value = "FIELD",
 		target = "Lme/cortex/voxy/client/core/rendering/hierachical/HierarchicalOcclusionTraverser;traversal:Lme/cortex/voxy/client/core/gl/shader/AutoBindingShader;",
 		opcode = Opcodes.GETFIELD))
-	private AutoBindingShader initRegionUniform(final AutoBindingShader traversal) {
+	private AutoBindingShader bindRegionBuffer(final AutoBindingShader traversal) {
 		return traversal.ubo("REGION_UNIFORM_BINDING", this.regionBuffer);
+	}
+
+	@Inject(method = "lateStageCompile", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
+	private void initRegionUniform(
+			final AbstractRenderPipeline pipeline, final CallbackInfo callback,
+			final String taa, final String scr) {
+		updateRegion();
+		DistantWynn.LOGGER.debug("Final traversal_dev.comp:\n{}", scr);
 	}
 
 	@Inject(method = "free", at = @At("HEAD"))
@@ -105,12 +113,5 @@ public class VoxyRegionCheck implements IVoxyRegionUpdater {
 			MemoryUtil.memPutInt(ptr, max.getY()); ptr += 4;
 			MemoryUtil.memPutInt(ptr, max.getZ()); ptr += 4;
 		}
-	}
-
-	@Inject(method = "lateStageCompile", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
-	private static void captureScr(
-			final AbstractRenderPipeline pipeline, final CallbackInfo callback,
-			final String taa, final String scr) {
-		DistantWynn.LOGGER.debug("Final traversal_dev.comp:\n{}", scr);
 	}
 }

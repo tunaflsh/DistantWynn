@@ -87,6 +87,7 @@ dependencies {
 
 	wynnRuntime "maven.modrinth:wynnlodgrabber:${project.wynnlod_version}"
 	wynnRuntime "maven.modrinth:wynntils:${project.wynntils_version}"
+	wynnRuntime "maven.modrinth:wynniris:${project.wynniris_version}"
 }
 
 loom {
@@ -135,17 +136,18 @@ loom {
 		}
 
 		wynn {
-			configName = "Vanilla + Wynntils"
+			configName = "Wynntils Sodium (has WynnIris)"
 			client()
 			property("fabric.addMods", "${-> [
 				configurations.debugRuntime.asPath,
+				configurations.sodiumRuntime.asPath,
 				configurations.wynnRuntime.asPath
 			].join(File.pathSeparator)}")
 			vmArgs "-Ddevauth.enabled=true"
 		}
 
 		voxyWynn {
-			configName = "Voxy + Wynntils"
+			configName = "Wynntils Voxy (has WynnIris)"
 			client()
 			property("fabric.addMods", "${-> [
 				configurations.debugRuntime.asPath,
@@ -158,10 +160,11 @@ loom {
 		}
 
 		dhWynn {
-			configName = "Distant Horizons + Wynntils"
+			configName = "Wynntils Distant Horizons (has WynnIris)"
 			client()
 			property("fabric.addMods", "${-> [
 				configurations.debugRuntime.asPath,
+				configurations.sodiumRuntime.asPath,
 				configurations.dhRuntime.asPath,
 				configurations.wynnRuntime.asPath
 			].join(File.pathSeparator)}")
