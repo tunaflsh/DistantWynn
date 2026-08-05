@@ -68,13 +68,16 @@ public final class WynnRegions {
 	 * @return true if the region was updated.
 	 */
 	public static boolean updateRegion() {
-		final BlockBox oldRegion = current;
-		if (!enabled) {
-			current = null;
-		} else {
-			final LocalPlayer player = Minecraft.getInstance().player;
-			current = player != null ? getRegionAt(player.blockPosition()) : null;
+		if (!enabled) return false;
+		final LocalPlayer player = Minecraft.getInstance().player;
+		if (player == null) return false;
+		final BlockPos pos = player.blockPosition();
+		if (current == null) {
+			current = getRegionAt(pos);
+			return current != null;
 		}
-		return current != oldRegion;
+		final boolean stillThere = current.contains(pos);
+		current = stillThere ? current : getRegionAt(pos);
+		return !stillThere;
 	}
 }
