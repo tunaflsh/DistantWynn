@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<profiles version="12">
+    <profile kind="CodeFormatterProfile" name="EditorConfigProfile" version="12">
+        <!-- Indentation: Tab-based -->
+        <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="tab"/>
+        <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
+        <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
+
+        <!-- Continuation Indent (8 spaces) -->
+        <setting id="org.eclipse.jdt.core.formatter.continuation_indentation" value="2"/>
+        <setting id="org.eclipse.jdt.core.formatter.continuation_indentation_for_array_initializer" value="2"/>
+
+        <!-- Line Length -->
+        <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="100"/>
+
+        <!-- Newline at End of File -->
+        <setting id="org.eclipse.jdt.core.formatter.insert_new_line_at_end_of_file_if_missing" value="insert"/>
+
+        <!-- Import Order & Wildcard Thresholds -->
+        <setting id="org.eclipse.jdt.core.formatter.importorder" value="static;java;javax;;net.minecraft;net.fabricmc"/>
+        <setting id="org.eclipse.jdt.core.formatter.importorder.ondemandthreshold" value="999"/>
+        <setting id="org.eclipse.jdt.core.formatter.staticondemandthreshold" value="999"/>
+    </profile>
+</profiles>
