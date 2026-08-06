@@ -49,7 +49,6 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		DistantWynn.LOGGER.debug(mixinClassName);
 		if (mixinClassName.contains("sodium"))
 			return hasSodium;
 		if (mixinClassName.contains("voxy"))

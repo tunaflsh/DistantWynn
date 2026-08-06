@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -24,8 +23,7 @@ import me.cortex.voxy.client.core.gl.shader.Shader.Builder;
 import me.cortex.voxy.client.core.rendering.hierachical.HierarchicalOcclusionTraverser;
 import me.cortex.voxy.client.core.rendering.util.UploadStream;
 import me.tunaflsh.distantwynn.DistantWynn;
-import me.tunaflsh.distantwynn.util.IVoxyRegionUpdater;
-import me.tunaflsh.distantwynn.util.WynnRegions;
+import me.tunaflsh.distantwynn.util.IVoxyRegionCuller;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockBox;
 import net.minecraft.core.BlockPos;
@@ -33,30 +31,29 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 @Mixin(HierarchicalOcclusionTraverser.class)
-public class VoxyRegionCheck implements IVoxyRegionUpdater {
+public class VoxyRegionCuller implements IVoxyRegionCuller {
 	@Shadow
 	private static int BINDING_COUNTER;
 	private static final int REGION_UNIFORM_BINDING = BINDING_COUNTER++;
 
 	private final GlBuffer regionBuffer = new GlBuffer(32).zero();
 
-	@ModifyVariable(
+	@ModifyExpressionValue(
 	method = "lateStageCompile",
 	at = @At(
-		value = "INVOKE_ASSIGN",
+		value = "INVOKE",
 		target = "Lme/cortex/voxy/client/core/gl/shader/ShaderLoader;parse(Ljava/lang/String;)Ljava/lang/String;",
-		ordinal = 0),
-	name = {"scr"})
+		ordinal = 0))
 	private static String addRegionCheck(String scr) {
-		final ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-		final Identifier regionId = DistantWynn.id("shaders/wynn/region.glsl");
+		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+		Identifier regionId = DistantWynn.id("shaders/wynn/region.glsl");
 		try (InputStream in = resourceManager.open(regionId)) {
-			final String regionSrc = IOUtils.toString(in, StandardCharsets.UTF_8);
+			String regionSrc = IOUtils.toString(in, StandardCharsets.UTF_8);
 			scr = scr.replaceFirst("void main", regionSrc + "\n$0");
 			scr = scr.replaceFirst(
 					"if \\(isWithinRenderDistance\\(node\\)\\)",
 					"if (!outsideRegion(node) && isWithinRenderDistance(node))");
-		} catch (final IOException e) {
+		} catch (IOException e) {
 			DistantWynn.LOGGER.error("Failed to read shader source for {}", regionId.toString(), e);
 		}
 		return scr;
@@ -68,7 +65,7 @@ public class VoxyRegionCheck implements IVoxyRegionUpdater {
 		value = "INVOKE",
 		target = "Lme/cortex/voxy/client/core/gl/shader/Shader$Builder;defineIf(Ljava/lang/String;Z)Lme/cortex/voxy/client/core/gl/shader/Shader$Builder;",
 		ordinal = 0))
-	private static Builder<AutoBindingShader> defineRegionBinding(final Builder<AutoBindingShader> builder) {
+	private static Builder<AutoBindingShader> defineRegionBinding(Builder<AutoBindingShader> builder) {
 		return builder.define("REGION_UNIFORM_BINDING", REGION_UNIFORM_BINDING);
 	}
 
@@ -78,33 +75,32 @@ public class VoxyRegionCheck implements IVoxyRegionUpdater {
 		value = "FIELD",
 		target = "Lme/cortex/voxy/client/core/rendering/hierachical/HierarchicalOcclusionTraverser;traversal:Lme/cortex/voxy/client/core/gl/shader/AutoBindingShader;",
 		opcode = Opcodes.GETFIELD))
-	private AutoBindingShader bindRegionBuffer(final AutoBindingShader traversal) {
+	private AutoBindingShader bindRegionBuffer(AutoBindingShader traversal) {
 		return traversal.ubo("REGION_UNIFORM_BINDING", this.regionBuffer);
 	}
 
 	@Inject(method = "lateStageCompile", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
 	private void initRegionUniform(
-			final AbstractRenderPipeline pipeline, final CallbackInfo callback,
-			final String taa, final String scr) {
-		updateRegion();
+			AbstractRenderPipeline pipeline, CallbackInfo ci,
+			String taa, String scr) {
+		setRegion(DistantWynn.getRegionTracker().getRegion());
 		DistantWynn.LOGGER.debug("Final traversal_dev.comp:\n{}", scr);
 	}
 
 	@Inject(method = "free", at = @At("HEAD"))
-	private void freeRegionBuffer(final CallbackInfo callback) {
+	private void freeRegionBuffer(CallbackInfo ci) {
 		this.regionBuffer.free();
 	}
 
-	public void updateRegion() {
-		final BlockBox current = WynnRegions.getCurrent();
+	@Override
+	public void setRegion(BlockBox region) {
 		long ptr = UploadStream.INSTANCE.upload(this.regionBuffer, 0, 32);
 
-		if (current == null) {
-			ptr += 3 * 4;
-			MemoryUtil.memPutInt(ptr, 0); // min.w == 0 for current == null
+		if (region == null) {
+			MemoryUtil.memPutInt(ptr + 3 * 4, 0); // min.w == 0 for current == null
 		} else {
-			final BlockPos min = current.min();
-			final BlockPos max = current.max();
+			BlockPos min = region.min();
+			BlockPos max = region.max();
 			MemoryUtil.memPutInt(ptr, min.getX()); ptr += 4;
 			MemoryUtil.memPutInt(ptr, min.getY()); ptr += 4;
 			MemoryUtil.memPutInt(ptr, min.getZ()); ptr += 4;

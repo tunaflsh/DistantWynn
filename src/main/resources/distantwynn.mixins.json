@@ -3,10 +3,10 @@
   "package": "me.tunaflsh.distantwynn.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "minecraft.MinecraftRegionCheck",
-    "sodium.SodiumRegionCheck",
-    "voxy.VoxyRegionCheck",
-    "voxy.VoxyTraverserAccessor",
+    "minecraft.MinecraftRegionCuller",
+    "sodium.SodiumRegionCuller",
+    "voxy.VoxyRegionCuller",
+    "voxy.VoxyRenderSystemAccessor",
     "voxy.LevelRendererAccessor"
   ],
   "plugin": "me.tunaflsh.distantwynn.MixinConfigPlugin",
