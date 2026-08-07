@@ -3,6 +3,7 @@ package me.tunaflsh.distantwynn.mixin.voxy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.system.MemoryUtil;
@@ -36,7 +37,7 @@ public class VoxyRegionCuller implements IVoxyRegionCuller {
 	private static int BINDING_COUNTER;
 	private static final int REGION_UNIFORM_BINDING = BINDING_COUNTER++;
 
-	private final GlBuffer regionBuffer = new GlBuffer(32).zero();
+	private final GlBuffer regionBuffer = new GlBuffer(64).zero();
 
 	@ModifyExpressionValue(
 	method = "lateStageCompile",
@@ -49,10 +50,14 @@ public class VoxyRegionCuller implements IVoxyRegionCuller {
 		Identifier regionId = DistantWynn.id("shaders/wynn/region.glsl");
 		try (InputStream in = resourceManager.open(regionId)) {
 			String regionSrc = IOUtils.toString(in, StandardCharsets.UTF_8);
-			scr = scr.replaceFirst("void main", regionSrc + "\n$0");
 			scr = scr.replaceFirst(
-					"if \\(isWithinRenderDistance\\(node\\)\\)",
-					"if (!outsideRegion(node) && isWithinRenderDistance(node))");
+					Pattern.quote("void enqueueSelfForRender(in UnpackedNode node) {"),
+					regionSrc + "\n$0"
+					+ "\n    if (outsideRegion(node, voxyRegion)) return;"
+					);
+			scr = scr.replaceFirst(
+					Pattern.quote("if (isWithinRenderDistance(node))"),
+					"if (!outsideRegion(node, wynnRegion) && isWithinRenderDistance(node))");
 		} catch (IOException e) {
 			DistantWynn.LOGGER.error("Failed to read shader source for {}", regionId.toString(), e);
 		}
@@ -83,7 +88,7 @@ public class VoxyRegionCuller implements IVoxyRegionCuller {
 	private void initRegionUniform(
 			AbstractRenderPipeline pipeline, CallbackInfo ci,
 			String taa, String scr) {
-		setRegion(DistantWynn.getRegionTracker().getRegion());
+		setWynnRegion(DistantWynn.getRegionTracker().getRegion());
 		DistantWynn.LOGGER.debug("Final traversal_dev.comp:\n{}", scr);
 	}
 
@@ -93,18 +98,29 @@ public class VoxyRegionCuller implements IVoxyRegionCuller {
 	}
 
 	@Override
-	public void setRegion(BlockBox region) {
-		long ptr = UploadStream.INSTANCE.upload(this.regionBuffer, 0, 32);
+	public void setWynnRegion(BlockBox region) {
+		setRegion(region, 0);
+		setRegion(null, 32);
+	}
+
+	@Override
+	public void setVoxyRegion(BlockBox region) {
+		setRegion(null, 0);
+		setRegion(region, 32);
+	}
+
+	private void setRegion(BlockBox region, long offset) {
+		long ptr = UploadStream.INSTANCE.upload(this.regionBuffer, offset, 32);
 
 		if (region == null) {
-			MemoryUtil.memPutInt(ptr + 3 * 4, 0); // min.w == 0 for current == null
+			MemoryUtil.memPutInt(ptr + 3 * 4, 0); // min.w == 0
 		} else {
 			BlockPos min = region.min();
 			BlockPos max = region.max();
 			MemoryUtil.memPutInt(ptr, min.getX()); ptr += 4;
 			MemoryUtil.memPutInt(ptr, min.getY()); ptr += 4;
 			MemoryUtil.memPutInt(ptr, min.getZ()); ptr += 4;
-			MemoryUtil.memPutInt(ptr, 1); ptr += 4; // min.w == 1 for current != null
+			MemoryUtil.memPutInt(ptr, 1); ptr += 4; // min.w == 1
 			MemoryUtil.memPutInt(ptr, max.getX()); ptr += 4;
 			MemoryUtil.memPutInt(ptr, max.getY()); ptr += 4;
 			MemoryUtil.memPutInt(ptr, max.getZ()); ptr += 4;

@@ -8,7 +8,7 @@ import net.minecraft.core.BlockBox;
 import net.minecraft.core.BlockPos;
 
 public sealed interface IRegionTracker
-permits NullRegionTracker, WynnRegionTracker {
+permits NullRegionTracker, WynnRegionTracker, VoxyRegionTracker {
 	/**
 	 * @return The current region.
 	 */

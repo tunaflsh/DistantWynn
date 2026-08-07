@@ -4,12 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.cortex.voxy.client.core.IGetVoxyRenderSystem;
+import me.cortex.voxy.client.core.VoxyRenderSystem;
+import me.cortex.voxy.common.world.WorldEngine;
 import me.tunaflsh.distantwynn.mixin.voxy.LevelRendererAccessor;
 import me.tunaflsh.distantwynn.mixin.voxy.VoxyRenderSystemAccessor;
 import me.tunaflsh.distantwynn.util.IRegionTracker;
 import me.tunaflsh.distantwynn.util.IRegionTracker.Status;
 import me.tunaflsh.distantwynn.util.IVoxyRegionCuller;
 import me.tunaflsh.distantwynn.util.NullRegionTracker;
+import me.tunaflsh.distantwynn.util.VoxyRegionTracker;
 import me.tunaflsh.distantwynn.util.WynnRegionTracker;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -27,6 +30,7 @@ public class DistantWynn implements ModInitializer {
 
 	private static NullRegionTracker nullRegionTracker = new NullRegionTracker();
 	private static WynnRegionTracker wynnRegionTracker; // track pre-defined wynn regions
+	private static VoxyRegionTracker voxyRegionTracker; // dynamically compute region boundaries
 	private static IRegionTracker regionTracker = nullRegionTracker;
 
 	public static IRegionTracker getRegionTracker() {
@@ -35,6 +39,7 @@ public class DistantWynn implements ModInitializer {
 
 	private int tick = 0;
 	private boolean disableWynnTracker = false;
+	private boolean disableVoxyTracker = false;
 
 	@Override
 	public void onInitialize() {
@@ -50,6 +55,7 @@ public class DistantWynn implements ModInitializer {
 
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			regionTracker = nullRegionTracker;
+			voxyRegionTracker = null;
 		});
 
 		ClientTickEvents.START_WORLD_TICK.register(world -> {
@@ -77,7 +83,22 @@ public class DistantWynn implements ModInitializer {
 				var levelRenderer = (IGetVoxyRenderSystem) worldAccessor.distantwynn$getLevelRenderer();
 				var renderer = (VoxyRenderSystemAccessor) levelRenderer.voxy$getRenderSystem();
 				var culler = (IVoxyRegionCuller) renderer.distantwynn$getTraversal();
-				culler.setRegion(region);
+
+				switch (regionTracker) {
+					case WynnRegionTracker w -> {
+						culler.setWynnRegion(region);
+						if (disableVoxyTracker || region != null) return;
+						if (voxyRegionTracker == null) {
+							WorldEngine engine = ((VoxyRenderSystem) renderer).getEngine();
+							voxyRegionTracker = new VoxyRegionTracker(engine);
+						}
+						regionTracker = voxyRegionTracker;
+					}
+					case VoxyRegionTracker v -> {
+						culler.setVoxyRegion(disableVoxyTracker ? null : region);
+					}
+					default -> {}
+				}
 			}
 		});
 	}
