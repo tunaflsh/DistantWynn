@@ -88,10 +88,8 @@ public class DistantWynn implements ModInitializer {
 					case WynnRegionTracker w -> {
 						culler.setWynnRegion(region);
 						if (disableVoxyTracker || region != null) return;
-						if (voxyRegionTracker == null) {
-							WorldEngine engine = ((VoxyRenderSystem) renderer).getEngine();
-							voxyRegionTracker = new VoxyRegionTracker(engine);
-						}
+						if (voxyRegionTracker == null)
+							voxyRegionTracker = new VoxyRegionTracker(((VoxyRenderSystem) renderer).getEngine());
 						regionTracker = voxyRegionTracker;
 					}
 					case VoxyRegionTracker v -> {

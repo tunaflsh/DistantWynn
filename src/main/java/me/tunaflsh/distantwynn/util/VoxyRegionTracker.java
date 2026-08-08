@@ -36,6 +36,9 @@ public final class VoxyRegionTracker implements IRegionTracker {
 
 	@Override
 	public Status updateRegion() {
+		if (!worldIn.isLive())
+			return Status.UNDEFINED;
+
 		if (Status.CHANGED == IRegionTracker.super.updateRegion()) {
 			region = null;
 			return Status.CHANGED;
