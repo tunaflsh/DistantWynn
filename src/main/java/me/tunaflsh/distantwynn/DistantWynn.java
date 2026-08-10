@@ -104,13 +104,13 @@ public class DistantWynn implements ModInitializer {
 			}
 
 			if (changed) {
-				LOGGER.info("Region Updated");
-				LOGGER.info("Tracker {}", regionTracker);
+				LOGGER.debug("Region Updated");
+				LOGGER.debug("Tracker {}", regionTracker);
 				if (RegionTracker.WYNN == regionTracker)
-					LOGGER.info("Region Name {}", wynnRegionTracker.getRegionName());
+					LOGGER.debug("Region Name {}", wynnRegionTracker.getRegionName());
 				if (null != region)
-					LOGGER.info("Size {}x{}x{}", region.sizeX(), region.sizeY(), region.sizeZ());
-				LOGGER.info("Box {}", region);
+					LOGGER.debug("Size {}x{}x{}", region.sizeX(), region.sizeY(), region.sizeZ());
+				LOGGER.debug("Box {}", region);
 			}
 		});
 	}
