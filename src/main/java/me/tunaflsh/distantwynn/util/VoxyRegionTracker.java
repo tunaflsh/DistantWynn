@@ -40,7 +40,7 @@ public class VoxyRegionTracker implements IRegionTracker {
 
 	@Override
 	public boolean updateRegion() {
-		if (world == null || !world.isLive())
+		if (!world.isLive())
 			return false;
 
 		if (IRegionTracker.super.updateRegion()) {
