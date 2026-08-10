@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockBox;
 import net.minecraft.core.BlockPos;
 
-public final class WynnRegionTracker implements IRegionTracker {
+public class WynnRegionTracker implements IRegionTracker {
 	public enum Region {
 		WYNN(-2512, -145, 1663, -5776),
 		REALM_OF_LIGHT(-1040, -5793, -641, -6576),
@@ -27,35 +27,24 @@ public final class WynnRegionTracker implements IRegionTracker {
 	}
 
 	private @Nullable Region region;
-	private boolean disabled = false;
-
-	public void enable() { disabled = false; }
-	public void disable() { disabled = true; }
 
 	@Override
 	public @Nullable BlockBox getRegion() {
-		return disabled || region == null ? null : region.boundary;
+		return region == null ? null : region.boundary;
 	}
 
 	@Override
-	public Status updateRegion() {
-		if (disabled)
-			return Status.UNDEFINED;
-		if (Status.UNCHANGED == IRegionTracker.super.updateRegion())
-			return Status.UNCHANGED;
+	public boolean updateRegion() {
+		if (!IRegionTracker.super.updateRegion() && region != null)
+			return false;
 
 		BlockPos origin = Minecraft.getInstance().player.blockPosition();
 		Region oldRegion = region;
 		region = getRegionAt(origin);
-		if (region != oldRegion)
-			return Status.CHANGED;
-		else if (region != null)
-			return Status.UNCHANGED;
-		return Status.UNDEFINED;
+		return region != oldRegion;
 	}
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + (region == null ? "" : "[" + region.name() + "]");
+	public String getRegionName() {
+		return region == null ? "NULL" : region.name();
 	}
 }

@@ -20,7 +20,7 @@ public class MinecraftRegionCuller {
 	private static SectionRenderDispatcher.RenderSection insideRegion(SectionRenderDispatcher.RenderSection renderSection) {
 		if (renderSection == null) return null;
 
-		BlockBox region = DistantWynn.getRegionTracker().getRegion();
+		BlockBox region = DistantWynn.getRegion();
 		if (region == null || region.contains(renderSection.getRenderOrigin()))
 			return renderSection;
 		return null;

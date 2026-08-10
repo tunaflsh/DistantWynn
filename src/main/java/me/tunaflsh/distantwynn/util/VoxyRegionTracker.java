@@ -1,7 +1,5 @@
 package me.tunaflsh.distantwynn.util;
 
-import java.util.Arrays;
-
 import org.jspecify.annotations.Nullable;
 
 import me.cortex.voxy.common.world.WorldEngine;
@@ -11,9 +9,9 @@ import net.minecraft.core.BlockBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 
-public final class VoxyRegionTracker implements IRegionTracker {
+public class VoxyRegionTracker implements IRegionTracker {
 	private @Nullable BlockBox region;
-	private final WorldEngine worldIn;
+	private @Nullable WorldEngine world;
 	private final RandomSource random;
 
 	private static final int NORTH = 0; // -z
@@ -24,8 +22,7 @@ public final class VoxyRegionTracker implements IRegionTracker {
 	private static final int TRIALS = 5;
 	private static final int DEPTH = 50;
 
-	public VoxyRegionTracker(WorldEngine worldIn) {
-		this.worldIn = worldIn;
+	public VoxyRegionTracker() {
 		random = RandomSource.create();
 	}
 
@@ -34,17 +31,24 @@ public final class VoxyRegionTracker implements IRegionTracker {
 		return region;
 	}
 
-	@Override
-	public Status updateRegion() {
-		if (!worldIn.isLive())
-			return Status.UNDEFINED;
-
-		if (Status.CHANGED == IRegionTracker.super.updateRegion()) {
+	public void updateWorld(WorldEngine world) {
+		if (this.world != world)
 			region = null;
-			return Status.CHANGED;
+
+		this.world = world;
+	}
+
+	@Override
+	public boolean updateRegion() {
+		if (world == null || !world.isLive())
+			return false;
+
+		if (IRegionTracker.super.updateRegion()) {
+			region = null;
+			return true;
 		}
 
-		Status status = Status.UNCHANGED;
+		boolean changed = false;
 
 		if (region == null) {
 			var origin = Minecraft.getInstance().player.blockPosition();
@@ -53,7 +57,7 @@ public final class VoxyRegionTracker implements IRegionTracker {
 			region = new BlockBox(
 					new BlockPos(x << 5, -64, z << 5),
 					new BlockPos(x + 1 << 5, 319, z + 1 << 5));
-			status = Status.CHANGED;
+			changed = true;
 		}
 
 		for (int side : new int[] {NORTH, SOUTH, EAST, WEST}) {
@@ -86,7 +90,7 @@ public final class VoxyRegionTracker implements IRegionTracker {
 				}
 				int j = 0;
 				for (; tryExpand(x, y, z) && j < DEPTH; j++) {
-					status = Status.CHANGED;
+					changed = true;
 					switch (side) {
 						case NORTH -> x--;
 						case SOUTH -> x++;
@@ -98,11 +102,11 @@ public final class VoxyRegionTracker implements IRegionTracker {
 			}
 		}
 
-		return status;
+		return changed;
 	}
 
 	private boolean tryExpand(int x, int y, int z) {
-		WorldSection section = worldIn.acquireIfExists(0, x, y, z);
+		WorldSection section = world.acquireIfExists(0, x, y, z);
 		if (section == null) return false;
 
 		try {
