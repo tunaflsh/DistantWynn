@@ -7,8 +7,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockBox;
 import net.minecraft.core.BlockPos;
 
-public sealed interface IRegionTracker
-permits NullRegionTracker, WynnRegionTracker, VoxyRegionTracker {
+public interface IRegionTracker {
 	/**
 	 * @return The current region.
 	 */
@@ -17,19 +16,14 @@ permits NullRegionTracker, WynnRegionTracker, VoxyRegionTracker {
 	}
 
 	/**
-	 * @return {@link Status#CHANGED}, {@link Status#UNCHANGED}, or {@link Status#UNDEFINED}
+	 * @return Whether the region was changed.
 	 */
-	default Status updateRegion() {
+	default boolean updateRegion() {
 		LocalPlayer player = Minecraft.getInstance().player;
-		if (player == null) return Status.UNCHANGED;
+		if (player == null) return false;
 
 		BlockPos pos = player.blockPosition();
 		BlockBox region = getRegion();
-		if (region != null)
-			return region.contains(pos) ? Status.UNCHANGED : Status.CHANGED;
-
-		return Status.UNDEFINED;
+		return region != null && !region.contains(pos);
 	}
-
-	public enum Status { CHANGED, UNCHANGED, UNDEFINED }
 }

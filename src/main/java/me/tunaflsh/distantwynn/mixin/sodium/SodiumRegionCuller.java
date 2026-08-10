@@ -20,7 +20,7 @@ public class SodiumRegionCuller {
 	private static void insideRegion(
 			RenderSection section, Viewport viewport, float maxDistance,
 			CallbackInfoReturnable<Boolean> cir) {
-		BlockBox region = DistantWynn.getRegionTracker().getRegion();
+		BlockBox region = DistantWynn.getRegion();
 		if (region == null) return;
 		if (region.contains(section.getPosition().origin())) return;
 		cir.setReturnValue(false);

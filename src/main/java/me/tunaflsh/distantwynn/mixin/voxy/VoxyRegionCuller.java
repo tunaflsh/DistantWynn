@@ -88,7 +88,7 @@ public class VoxyRegionCuller implements IVoxyRegionCuller {
 	private void initRegionUniform(
 			AbstractRenderPipeline pipeline, CallbackInfo ci,
 			String taa, String scr) {
-		setWynnRegion(DistantWynn.getRegionTracker().getRegion());
+		setWynnRegion(DistantWynn.getRegion());
 		DistantWynn.LOGGER.debug("Final traversal_dev.comp:\n{}", scr);
 	}
 
