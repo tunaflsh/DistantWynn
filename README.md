@@ -4,11 +4,11 @@ Dynamically adjust the visible region based on the player's location in Wynncraf
 
 ## Features
 
-- Current *set* of regions:
+- List of predefined regions:
   - Wynn (main region)
   - Realm of Light
 - Voxy support:
-  - Automatic region boundary detection outside of the *set*
+  - Automatic region detection outside the predefined list
 
 ## Roadmap
 
