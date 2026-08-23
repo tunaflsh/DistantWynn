@@ -1,4 +1,4 @@
-package me.tunaflsh.distantwynn.util;
+package me.tunaflsh.distantwynn.core;
 
 import net.minecraft.core.BlockBox;
 

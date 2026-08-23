@@ -1,4 +1,4 @@
-package me.tunaflsh.distantwynn;
+package me.tunaflsh.distantwynn.config;
 
 import java.util.List;
 import java.util.Set;
@@ -8,11 +8,15 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.service.MixinService;
 
+import me.tunaflsh.distantwynn.DistantWynn;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class MixinConfigPlugin implements IMixinConfigPlugin {
-	static boolean hasSodium = false;
-	static boolean hasVoxy = false;
+	private static boolean hasSodium = false;
+	private static boolean hasVoxy = false;
+
+	public static boolean hasSodium() { return hasSodium; }
+	public static boolean hasVoxy() { return hasVoxy; }
 
 	private static boolean hasClass(String name) {
 		try {

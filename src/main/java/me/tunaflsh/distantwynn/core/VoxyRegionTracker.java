@@ -1,4 +1,4 @@
-package me.tunaflsh.distantwynn.util;
+package me.tunaflsh.distantwynn.core;
 
 import org.jspecify.annotations.Nullable;
 
@@ -10,21 +10,25 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 
 public class VoxyRegionTracker implements IRegionTracker {
-	private @Nullable BlockBox region;
-	private @Nullable WorldEngine world;
-	private final RandomSource random;
-
 	private static final int NORTH = 0; // -z
 	private static final int SOUTH = 1; // +z
 	private static final int EAST = 2; // +x
 	private static final int WEST = 3; // -x
 
-	private static final int TRIALS = 5;
+	// Pokes each cardinal direction TRIALS times until it finds new sections
+	// Then it will expand the region in that direction, up to 50 sections
+	private static final int TRIALS = 2;
 	private static final int DEPTH = 50;
+	private static final RandomSource random = RandomSource.create();
 
-	public VoxyRegionTracker() {
-		random = RandomSource.create();
+	private static final VoxyRegionTracker INSTANCE = new VoxyRegionTracker();
+
+	public static VoxyRegionTracker getInstance() {
+		return INSTANCE;
 	}
+
+	private @Nullable BlockBox region;
+	private @Nullable WorldEngine world;
 
 	@Override
 	public @Nullable BlockBox getRegion() {

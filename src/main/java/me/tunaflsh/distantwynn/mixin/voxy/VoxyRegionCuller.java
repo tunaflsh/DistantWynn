@@ -24,7 +24,7 @@ import me.cortex.voxy.client.core.gl.shader.Shader.Builder;
 import me.cortex.voxy.client.core.rendering.hierachical.HierarchicalOcclusionTraverser;
 import me.cortex.voxy.client.core.rendering.util.UploadStream;
 import me.tunaflsh.distantwynn.DistantWynn;
-import me.tunaflsh.distantwynn.util.IVoxyRegionCuller;
+import me.tunaflsh.distantwynn.core.IVoxyRegionCuller;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockBox;
 import net.minecraft.core.BlockPos;

@@ -9,7 +9,7 @@
     "voxy.VoxyRenderSystemAccessor",
     "voxy.LevelRendererAccessor"
   ],
-  "plugin": "me.tunaflsh.distantwynn.MixinConfigPlugin",
+  "plugin": "me.tunaflsh.distantwynn.config.MixinConfigPlugin",
   "injectors": {
     "defaultRequire": 1
   },

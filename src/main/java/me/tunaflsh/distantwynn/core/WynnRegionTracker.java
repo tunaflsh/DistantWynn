@@ -1,4 +1,4 @@
-package me.tunaflsh.distantwynn.util;
+package me.tunaflsh.distantwynn.core;
 
 import org.jspecify.annotations.Nullable;
 
@@ -7,6 +7,12 @@ import net.minecraft.core.BlockBox;
 import net.minecraft.core.BlockPos;
 
 public class WynnRegionTracker implements IRegionTracker {
+	private static final WynnRegionTracker INSTANCE = new WynnRegionTracker();
+
+	public static WynnRegionTracker getInstance() {
+		return INSTANCE;
+	}
+
 	public enum Region {
 		WYNN(-2512, -145, 1663, -5776),
 		REALM_OF_LIGHT(-1040, -5793, -641, -6576),
