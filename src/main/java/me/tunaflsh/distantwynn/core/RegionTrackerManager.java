@@ -5,6 +5,7 @@ import org.jspecify.annotations.Nullable;
 import me.cortex.voxy.client.core.IGetVoxyRenderSystem;
 import me.cortex.voxy.client.core.VoxyRenderSystem;
 import me.tunaflsh.distantwynn.DistantWynn;
+import me.tunaflsh.distantwynn.config.DistantWynnConfig;
 import me.tunaflsh.distantwynn.config.MixinConfigPlugin;
 import me.tunaflsh.distantwynn.mixin.voxy.LevelRendererAccessor;
 import me.tunaflsh.distantwynn.mixin.voxy.VoxyRenderSystemAccessor;
@@ -74,8 +75,8 @@ public class RegionTrackerManager {
 	private static boolean updateTrackerAndRegion(Tracker TRACKER, ClientLevel world) {
 		boolean changed = false;
 		boolean enabled = switch (TRACKER) {
-			case WYNN -> true;
-			case VOXY -> true;
+			case WYNN -> DistantWynnConfig.wynnTrackerEnabled;
+			case VOXY -> DistantWynnConfig.voxyTrackerEnabled;
 			case NULL -> false;
 		};
 

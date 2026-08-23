@@ -70,13 +70,13 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
 	modCompileOnly "net.caffeinemc:sodium-fabric:${project.sodium_version}"
 	modCompileOnly "maven.modrinth:voxy:${project.voxy_version}"
 	modCompileOnly "maven.modrinth:distanthorizons:${project.dh_version}"
 
 	debugRuntime "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
 	debugRuntime "maven.modrinth:remember-my-txt:${project.remember_version}"
-	debugRuntime "dev.isxander:yet-another-config-lib:${project.yacl_version}"
 	debugRuntime "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
 	debugRuntime "maven.modrinth:f5-split:${project.f5_split_version}"
 	debugRuntime "maven.modrinth:freecam:${project.freecam_version}"

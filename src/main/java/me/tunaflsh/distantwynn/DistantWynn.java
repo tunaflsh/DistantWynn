@@ -4,6 +4,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.tunaflsh.distantwynn.config.DistantWynnConfig;
 import me.tunaflsh.distantwynn.core.RegionTrackerManager;
 import me.tunaflsh.distantwynn.core.VoxyRegionTracker;
 import me.tunaflsh.distantwynn.core.WynnRegionTracker;
@@ -30,6 +31,8 @@ public class DistantWynn implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		DistantWynnConfig.HANDLER.load();
+
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			if (!handler.getConnection().getRemoteAddress().toString().contains("wynncraft.com"))
 				return;

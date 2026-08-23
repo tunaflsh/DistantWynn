@@ -16,9 +16,9 @@
   "icon": "assets/distantwynn/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "me.tunaflsh.distantwynn.DistantWynn"
-    ]
+    "main": [ "me.tunaflsh.distantwynn.DistantWynn" ],
+    "modmenu": [ "me.tunaflsh.distantwynn.config.ModMenuIntegration" ],
+    "sodium:config_api_user": [ "me.tunaflsh.distantwynn.config.SodiumConfigBuilder" ]
   },
   "mixins": [
     "distantwynn.mixins.json"
@@ -27,6 +27,7 @@
     "fabricloader": ">=0.19.3",
     "minecraft": "~1.21.11",
     "java": ">=21",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "yet_another_config_lib_v3": ">=3.8.1"
   }
 }
