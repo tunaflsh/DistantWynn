@@ -19,9 +19,10 @@ configurations {
 	sodiumRuntime;
 	voxyRuntime;
 	dhRuntime;
+	bobbyRuntime;
 	wynnRuntime;
 
-	configure([debugRuntime, sodiumRuntime, voxyRuntime, dhRuntime, wynnRuntime]) {
+	configure([debugRuntime, sodiumRuntime, voxyRuntime, dhRuntime, bobbyRuntime, wynnRuntime]) {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 }
@@ -84,6 +85,7 @@ dependencies {
 	sodiumRuntime "net.caffeinemc:sodium-fabric:${project.sodium_version}"
 	voxyRuntime explosion.fabric("maven.modrinth:voxy:${project.voxy_version}")
 	dhRuntime "maven.modrinth:distanthorizons:${project.dh_version}"
+	bobbyRuntime "maven.modrinth:bobby:${project.bobby_version}"
 
 	wynnRuntime "maven.modrinth:wynnlodgrabber:${project.wynnlod_version}"
 	wynnRuntime "maven.modrinth:wynntils:${project.wynntils_version}"
@@ -135,6 +137,17 @@ loom {
 			vmArgs "-Dmixin.debug.export=true"
 		}
 
+		bobby {
+			configName = "Minecraft Bobby"
+			client()
+			property("fabric.addMods", "${-> [
+				configurations.debugRuntime.asPath,
+				configurations.bobbyRuntime.asPath
+			].join(File.pathSeparator)}")
+			vmArgs "-Ddevauth.enabled=true"
+			vmArgs "-Dmixin.debug.export=true"
+		}
+
 		wynn {
 			configName = "Wynntils Sodium (has WynnIris)"
 			client()
@@ -166,6 +179,19 @@ loom {
 				configurations.debugRuntime.asPath,
 				configurations.sodiumRuntime.asPath,
 				configurations.dhRuntime.asPath,
+				configurations.wynnRuntime.asPath
+			].join(File.pathSeparator)}")
+			vmArgs "-Ddevauth.enabled=true"
+			vmArgs "-Dmixin.debug.export=true"
+		}
+
+		bobbyWynn {
+			configName = "Wynntils Bobby (has WynnIris)"
+			client()
+			property("fabric.addMods", "${-> [
+				configurations.debugRuntime.asPath,
+				configurations.sodiumRuntime.asPath,
+				configurations.bobbyRuntime.asPath,
 				configurations.wynnRuntime.asPath
 			].join(File.pathSeparator)}")
 			vmArgs "-Ddevauth.enabled=true"
