@@ -4,20 +4,33 @@ Dynamically adjust the visible region based on the player's location in Wynncraf
 
 ![demo](./demo.png)
 
+## What about WynnVista?
+
+WynnVista dynamically reduces the render distance the moment you step out of the three provinces. There are edge cases this approach won't work. If you are in the Realm of Light, you won't be able to see the other end of the map. And if you're at the south, part of the Gavel province will leak through. This mod is made specifically to address that and the lack of proper voxy support in WynnVista.
+
+Originally, I intended to create PR in WynnVista, but the changes required a full rewrite. So, now it's a standalone mod.
+
 ## Features
 
-- List of predefined regions:
-  - Wynn (main region)
-  - Realm of Light
-- Voxy support:
-  - Automatic region detection outside the predefined list
+Use DistantWynn in combination with other mods that enable increased render distance.
+- [voxy](https://github.com/MCRcortex/voxy) supported with automatic region detection
+- [Bobby](https://github.com/Johni0702/bobby) not supported
+- [Distant Horizons](https://gitlab.com/distant-horizons-team/distant-horizons) not supported
+
+The automatic region detection is a fallback when you're not in one of the following locations:
+- Main Wynncraft map (Wynn, Gavel, Fruma provinces)
+- Realm of Light
 
 ## Roadmap
 
-- [ ] Distant Horizons support
-- [x] Options to disable features
-- [ ] Load the *set* of region boundaries from a file
-- [x] Make a unique logo
+- Distant Horizons support
+- Configure list of predefined locations
+- Bobby support
+
+## Acknowledgements
+
+- [WynnVista](https://github.com/DrBiznes/WynnVista) for inspiration
+- [voxy](https://github.com/MCRcortex/voxy) for logo inspiration
 
 ## License
 
