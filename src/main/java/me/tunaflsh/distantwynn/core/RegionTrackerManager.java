@@ -20,9 +20,9 @@ public class RegionTrackerManager {
 	}
 
 	private enum Tracker {
-		WYNN,
+		WYNN, // highest priority
 		VOXY,
-		NULL
+		NULL  // lowest priority
 	}
 
 	private static final WynnRegionTracker WYNN_TRACKER = WynnRegionTracker.getInstance();
@@ -80,7 +80,8 @@ public class RegionTrackerManager {
 			case NULL -> false;
 		};
 
-		if (tracker == Tracker.NULL && enabled) {
+		// only lower priority trackers can be changed to higher priority trackers
+		if (tracker.compareTo(TRACKER) > 0 && enabled) {
 			tracker = TRACKER;
 			changed = true;
 		}
