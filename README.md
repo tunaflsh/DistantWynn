@@ -2,6 +2,11 @@
 
 Dynamically adjust the visible region based on the player's location in Wynncraft.
 
+![demo](./demo.png)
+1. Voxy enabled, DistantWynn disabled
+2. Voxy enabled, DistantWynn enabled
+3. Voxy disabled
+
 ## Features
 
 - List of predefined regions:
@@ -12,10 +17,10 @@ Dynamically adjust the visible region based on the player's location in Wynncraf
 
 ## Roadmap
 
-- Distant Horizons support
-- Options to disable features
-- Load the *set* of region boundaries from a file
-- Make a unique logo
+- [ ] Distant Horizons support
+- [x] Options to disable features
+- [ ] Load the *set* of region boundaries from a file
+- [x] Make a unique logo
 
 ## License
 
