@@ -29,6 +29,7 @@ public class RegionTrackerManager {
 	private static final VoxyRegionTracker VOXY_TRACKER = VoxyRegionTracker.getInstance();
 	private static Tracker tracker = Tracker.NULL;
 	private static boolean enabled = false;
+	private static VoxyRenderSystem voxyRenderer;
 
 	public static void enable() {
 		enabled = true;
@@ -42,23 +43,27 @@ public class RegionTrackerManager {
 	public static void updateRegion(ClientLevel world) {
 		if (!enabled) return;
 
-		var changed = updateTrackerAndRegion(Tracker.WYNN, world);
+		boolean updated = updateTrackerAndRegion(Tracker.WYNN, world);
 
 		if (MixinConfigPlugin.hasVoxy()) {
-			changed |= updateTrackerAndRegion(Tracker.VOXY, world);
+			updated |= updateVoxyRenderer(world);
 
-			if (changed) {
-				var culler = (IVoxyRegionCuller) getVoxyRenderer(world).distantwynn$getTraversal();
+			if (voxyRenderer != null) {
+				updated |= updateTrackerAndRegion(Tracker.VOXY, world);
 
-				switch (tracker) {
-					case WYNN -> culler.setWynnRegion(region);
-					case VOXY -> culler.setVoxyRegion(region);
-					case NULL -> { culler.setWynnRegion(null); culler.setVoxyRegion(null); }
+				if (updated) {
+					var culler = (IVoxyRegionCuller) ((VoxyRenderSystemAccessor) voxyRenderer).distantwynn$getTraversal();
+
+					switch (tracker) {
+						case WYNN -> culler.setWynnRegion(region);
+						case VOXY -> culler.setVoxyRegion(region);
+						case NULL -> { culler.setWynnRegion(null); culler.setVoxyRegion(null); }
+					}
 				}
 			}
 		}
 
-		if (changed) {
+		if (updated) {
 			DistantWynn.LOGGER.debug("Region Updated");
 			DistantWynn.LOGGER.debug("Tracker {}", tracker);
 			if (Tracker.WYNN == tracker)
@@ -73,7 +78,7 @@ public class RegionTrackerManager {
 	 * @return true if the tracker or region changed
 	 */
 	private static boolean updateTrackerAndRegion(Tracker TRACKER, ClientLevel world) {
-		boolean changed = false;
+		boolean updated = false;
 		boolean enabled = switch (TRACKER) {
 			case WYNN -> DistantWynnConfig.wynnTrackerEnabled;
 			case VOXY -> DistantWynnConfig.voxyTrackerEnabled;
@@ -83,19 +88,19 @@ public class RegionTrackerManager {
 		// only lower priority trackers can be changed to higher priority trackers
 		if (tracker.compareTo(TRACKER) > 0 && enabled) {
 			tracker = TRACKER;
-			changed = true;
+			updated = true;
 		}
 
 		if (tracker == TRACKER)
 			if (enabled) {
 				switch (TRACKER) {
 					case WYNN -> {
-						changed |= WYNN_TRACKER.updateRegion();
+						updated |= WYNN_TRACKER.updateRegion();
 						region = WYNN_TRACKER.getRegion();
 					}
 					case VOXY -> {
-						VOXY_TRACKER.updateWorld(((VoxyRenderSystem) getVoxyRenderer(world)).getEngine());
-						changed |= VOXY_TRACKER.updateRegion();
+						VOXY_TRACKER.updateWorld(voxyRenderer.getEngine());
+						updated |= VOXY_TRACKER.updateRegion();
 						region = VOXY_TRACKER.getRegion();
 					}
 					case NULL -> {}
@@ -105,15 +110,18 @@ public class RegionTrackerManager {
 					tracker = Tracker.NULL;
 			} else {
 				tracker = Tracker.NULL;
-				changed = true;
+				updated = true;
 			}
 
-		return changed;
+		return updated;
 	}
 
-	private static VoxyRenderSystemAccessor getVoxyRenderer(ClientLevel world) {
+	private static boolean updateVoxyRenderer(ClientLevel world) {
+		var oldRenderer = voxyRenderer;
 		var worldAccessor = (LevelRendererAccessor) world;
 		var levelRenderer = (IGetVoxyRenderSystem) worldAccessor.distantwynn$getLevelRenderer();
-		return (VoxyRenderSystemAccessor) levelRenderer.voxy$getRenderSystem();
+		voxyRenderer = levelRenderer.voxy$getRenderSystem();
+
+		return oldRenderer != voxyRenderer;
 	}
 }
