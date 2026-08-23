@@ -3,9 +3,6 @@
 Dynamically adjust the visible region based on the player's location in Wynncraft.
 
 ![demo](./demo.png)
-1. Voxy enabled, DistantWynn disabled
-2. Voxy enabled, DistantWynn enabled
-3. Voxy disabled
 
 ## Features
 
