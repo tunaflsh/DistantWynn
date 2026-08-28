@@ -75,6 +75,11 @@ public class RegionTrackerManager {
 	}
 
 	/**
+	 * Change the tracker to a better one if applicable, and update the region
+	 *
+	 * NULL, VOXY -> WYNN
+	 * NULL -> VOXY
+	 *
 	 * @return true if the tracker or region changed
 	 */
 	private static boolean updateTrackerAndRegion(Tracker TRACKER, ClientLevel world) {
