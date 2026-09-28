@@ -14,8 +14,9 @@ Originally, I intended to create PR in WynnVista, but the changes required a ful
 
 Use DistantWynn in combination with other mods that enable increased render distance.
 - [voxy](https://github.com/MCRcortex/voxy) supported with automatic region detection
-- [Bobby](https://github.com/Johni0702/bobby) not supported
-- [Distant Horizons](https://gitlab.com/distant-horizons-team/distant-horizons) not supported
+- [Sodium](https://
+- [Bobby](https://github.com/Johni0702/bobby) support planned
+- [Distant Horizons](https://gitlab.com/distant-horizons-team/distant-horizons) support planned
 
 The automatic region detection is a fallback when you're not in one of the following locations:
 - Main Wynncraft map (Wynn, Gavel, Fruma provinces)
