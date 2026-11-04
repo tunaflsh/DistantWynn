@@ -38,6 +38,7 @@ public class RegionTrackerManager {
 	public static void disable() {
 		enabled = false;
 		tracker = Tracker.NULL;
+		region = null;
 	}
 
 	public static void updateRegion(ClientLevel world) {

@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
-import me.tunaflsh.distantwynn.DistantWynn;
+import me.tunaflsh.distantwynn.core.RegionTrackerManager;
 import net.minecraft.client.renderer.SectionOcclusionGraph;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 import net.minecraft.core.BlockBox;
@@ -20,7 +20,7 @@ public class MinecraftRegionCuller {
 	private static SectionRenderDispatcher.RenderSection insideRegion(SectionRenderDispatcher.RenderSection renderSection) {
 		if (renderSection == null) return null;
 
-		BlockBox region = DistantWynn.getRegion();
+		BlockBox region = RegionTrackerManager.getRegion();
 		if (region == null || region.contains(renderSection.getRenderOrigin()))
 			return renderSection;
 		return null;

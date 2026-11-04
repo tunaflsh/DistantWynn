@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import me.tunaflsh.distantwynn.DistantWynn;
+import me.tunaflsh.distantwynn.core.RegionTrackerManager;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;
 import net.caffeinemc.mods.sodium.client.render.chunk.occlusion.OcclusionCuller;
 import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
@@ -20,7 +20,7 @@ public class SodiumRegionCuller {
 	private static void insideRegion(
 			RenderSection section, Viewport viewport, float maxDistance,
 			CallbackInfoReturnable<Boolean> cir) {
-		BlockBox region = DistantWynn.getRegion();
+		BlockBox region = RegionTrackerManager.getRegion();
 		if (region == null) return;
 		if (region.contains(section.getPosition().origin())) return;
 		cir.setReturnValue(false);

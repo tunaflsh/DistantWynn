@@ -25,6 +25,7 @@ import me.cortex.voxy.client.core.rendering.hierachical.HierarchicalOcclusionTra
 import me.cortex.voxy.client.core.rendering.util.UploadStream;
 import me.tunaflsh.distantwynn.DistantWynn;
 import me.tunaflsh.distantwynn.core.IVoxyRegionCuller;
+import me.tunaflsh.distantwynn.core.RegionTrackerManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockBox;
 import net.minecraft.core.BlockPos;
@@ -88,7 +89,7 @@ public class VoxyRegionCuller implements IVoxyRegionCuller {
 	private void initRegionUniform(
 			AbstractRenderPipeline pipeline, CallbackInfo ci,
 			String taa, String scr) {
-		setWynnRegion(DistantWynn.getRegion());
+		setWynnRegion(RegionTrackerManager.getRegion());
 		DistantWynn.LOGGER.debug("Final traversal_dev.comp:\n{}", scr);
 	}
 
