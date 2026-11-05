@@ -81,6 +81,7 @@ dependencies {
 	debugRuntime "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
 	debugRuntime "maven.modrinth:f5-split:${project.f5_split_version}"
 	debugRuntime "maven.modrinth:freecam:${project.freecam_version}"
+	debugRuntime "maven.modrinth:waygl:${project.waygl_version}"
 
 	sodiumRuntime "net.caffeinemc:sodium-fabric:${project.sodium_version}"
 	voxyRuntime explosion.fabric("maven.modrinth:voxy:${project.voxy_version}")
