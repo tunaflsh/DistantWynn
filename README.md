@@ -15,7 +15,7 @@ Originally, I intended to create PR in WynnVista, but the changes required a ful
 Use DistantWynn in combination with other mods that enable increased render distance.
 - [voxy](https://github.com/MCRcortex/voxy) supported with automatic region detection
 - [Sodium](https://github.com/CaffeineMC/sodium) supported
-- [Bobby](https://github.com/Johni0702/bobby) support planned
+- [Bobby](https://github.com/Johni0702/bobby) works out of the box
 - [Distant Horizons](https://gitlab.com/distant-horizons-team/distant-horizons) support planned
 
 The automatic region detection is a fallback when you're not in one of the following locations:
@@ -26,7 +26,6 @@ The automatic region detection is a fallback when you're not in one of the follo
 
 - Distant Horizons support
 - Configure list of predefined locations
-- Bobby support
 
 ## Acknowledgements
 
